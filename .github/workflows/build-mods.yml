@@ -28,8 +28,8 @@ jobs:
         run: gradle build --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: yoonseul-core-fabric-0.1.0
-          path: mods/yoonseul-core/build/libs/yoonseul-core-fabric-0.1.0.jar
+          name: yoonseul-core-fabric-0.2.0
+          path: mods/yoonseul-core/build/libs/yoonseul-core-fabric-0.2.0.jar
           if-no-files-found: error
 
   build-ledger:
@@ -75,7 +75,7 @@ jobs:
           tar -xf launcher-src-0.3.8.fixed.zip -C launcher
       - uses: actions/download-artifact@v4
         with:
-          name: yoonseul-core-fabric-0.1.0
+          name: yoonseul-core-fabric-0.2.0
           path: launcher/assets
       - uses: actions/download-artifact@v4
         with:
