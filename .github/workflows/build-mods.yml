@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - 'mods/**'
+      - 'assets/**'
+      - 'tools/**'
       - 'launcher-src-*.zip.part-*'
       - '.github/workflows/build-mods.yml'
 
@@ -12,26 +14,6 @@ permissions:
   contents: write
 
 jobs:
-  build-core:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '25'
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '9.7.1'
-      - name: Build Yoonseul Core
-        working-directory: mods/yoonseul-core
-        run: gradle build --stacktrace
-      - uses: actions/upload-artifact@v4
-        with:
-          name: yoonseul-core-fabric-0.2.0
-          path: mods/yoonseul-core/build/libs/yoonseul-core-fabric-0.2.0.jar
-          if-no-files-found: error
-
   build-ledger:
     runs-on: ubuntu-latest
     steps:
@@ -58,10 +40,13 @@ jobs:
 
   build-launcher:
     if: github.ref == 'refs/heads/main'
-    needs: [build-core, build-ledger]
+    needs: [build-ledger]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Unpack launcher source
         shell: pwsh
         run: |
@@ -73,22 +58,11 @@ jobs:
           $output.Close()
           New-Item -ItemType Directory -Force launcher | Out-Null
           tar -xf launcher-src-0.3.8.fixed.zip -C launcher
-          (Get-Content launcher/app_meta.py -Raw).Replace('APP_VERSION = "0.3.9"','APP_VERSION = "0.4.0"') | Set-Content launcher/app_meta.py -Encoding utf8
-          (Get-Content launcher/mod_catalog.py -Raw).Replace('yoonseul-core-fabric-0.1.0.jar','yoonseul-core-fabric-0.2.0.jar').Replace('"bundled_version": "0.1.0"','"bundled_version": "0.2.0"') | Set-Content launcher/mod_catalog.py -Encoding utf8
-          (Get-Content launcher/frontend/nether-glass-launcher-standalone.html -Raw).Replace('윤슬 런처 0.3.9','윤슬 런처 0.4.0').Replace('구형 낙인·장부 파일을 윤띵으로 자동 교체하고 윤슬 코어 배포 방식을 바로잡았습니다.','새 클라이언트 허브와 계산기·타이머·줌·밝기·자동 달리기 기능을 추가했습니다.') | Set-Content launcher/frontend/nether-glass-launcher-standalone.html -Encoding utf8
-      - uses: actions/download-artifact@v4
-        with:
-          name: yoonseul-core-fabric-0.2.0
-          path: launcher/assets
+          python tools/patch_launcher_agent.py launcher assets/dongleland-core.jar
       - uses: actions/download-artifact@v4
         with:
           name: yoonseul-ledger-fabric-0.2.1
           path: launcher/assets
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: pip
-          cache-dependency-path: launcher/requirements.txt
       - name: Install launcher dependencies
         working-directory: launcher
         run: python -m pip install --upgrade -r requirements.txt
@@ -100,23 +74,23 @@ jobs:
         run: Copy-Item launcher/launcher_config.json launcher/dist/launcher_config.json
       - uses: actions/upload-artifact@v4
         with:
-          name: YoonseulLauncher-0.4.0-Windows
+          name: YoonseulLauncher-0.4.1-Windows
           path: |
             launcher/dist/YoonseulLauncher.exe
             launcher/dist/launcher_config.json
           if-no-files-found: error
       - name: Package release ZIP
         shell: pwsh
-        run: Compress-Archive -Path launcher/dist/YoonseulLauncher.exe,launcher/dist/launcher_config.json -DestinationPath YoonseulLauncher-0.4.0-Windows.zip
-      - name: Publish 0.4.0 release
+        run: Compress-Archive -Path launcher/dist/YoonseulLauncher.exe,launcher/dist/launcher_config.json -DestinationPath YoonseulLauncher-0.4.1-Windows.zip
+      - name: Publish 0.4.1 release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v0.4.0 *> $null
-          if ($LASTEXITCODE -ne 0) { gh release create v0.4.0 --title "윤슬 런처 0.4.0" --notes "윤슬 클라이언트 허브 첫 기능판" }
-          gh release upload v0.4.0 YoonseulLauncher-0.4.0-Windows.zip --clobber
-          gh release edit v0.4.0 `
-            --title "윤슬 런처 0.4.0" `
-            --notes "윤슬 클라이언트 허브 첫 기능판입니다.`n`n- 동글랜드와 분리된 윤슬 전용 허브`n- 모드 카테고리 및 카드 화면`n- 계산기와 타이머`n- 줌, 밝기 조절, 자동 달리기`n- 키 설정과 설정 저장`n- 발전과제 항목 제외" `
+          gh release view v0.4.1 *> $null
+          if ($LASTEXITCODE -ne 0) { gh release create v0.4.1 --title "윤슬 런처 0.4.1" --notes "원본 클라이언트 코어 복원판" }
+          gh release upload v0.4.1 YoonseulLauncher-0.4.1-Windows.zip --clobber
+          gh release edit v0.4.1 `
+            --title "윤슬 런처 0.4.1" `
+            --notes "올려주신 동글랜드 코어를 기반으로 원래 크기와 실제 기능을 복원했습니다.`n`n- 원본 클라이언트 허브와 설정 화면`n- HUD 배치 및 정보 HUD`n- 단축어 추가·저장·전송`n- 계산기·타이머·줌·밝기·시간·자동 달리기`n- 기존 임시 대형 허브 제거" `
             --latest
