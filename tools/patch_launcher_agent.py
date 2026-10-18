@@ -1,0 +1,53 @@
+"""Prepare the launcher to use the original client core as a Java agent."""
+from pathlib import Path
+import shutil
+import sys
+
+launcher = Path(sys.argv[1])
+agent_source = Path(sys.argv[2])
+assets = launcher / "assets"
+assets.mkdir(exist_ok=True)
+shutil.copy2(agent_source, assets / "yoonseul-client-core.jar")
+
+meta = launcher / "app_meta.py"
+text = meta.read_text(encoding="utf-8")
+text = text.replace('APP_VERSION = "0.3.9"', 'APP_VERSION = "0.4.1"')
+meta.write_text(text, encoding="utf-8")
+
+launch_py = launcher / "launcher.py"
+text = launch_py.read_text(encoding="utf-8")
+old = '"jvmArguments": [f"-Xmx{max_mem_mb}M"],'
+new = (
+    '"jvmArguments": [f"-Xmx{max_mem_mb}M", '
+    'f"-javaagent:{os.path.join(getattr(sys, \'_MEIPASS\', os.path.dirname(__file__)), '
+    "\'assets\', \'yoonseul-client-core.jar\')}"],"
+)
+if old not in text:
+    raise SystemExit("launcher.py JVM argument marker not found")
+text = text.replace(old, new)
+marker = "    return _command.get_minecraft_command(\n"
+cleanup = """    # The original client is loaded as a Java agent. Remove the temporary
+    # Fabric replacement so RShift and HUD hooks cannot collide with it.
+    mods_dir = os.path.join(instance.instance_dir(), "mods")
+    if os.path.isdir(mods_dir):
+        for filename in os.listdir(mods_dir):
+            if filename.lower().startswith("yoonseul-core-fabric-") and filename.lower().endswith(".jar"):
+                try:
+                    os.remove(os.path.join(mods_dir, filename))
+                except OSError:
+                    pass
+
+"""
+if marker not in text:
+    raise SystemExit("launcher.py command marker not found")
+text = text.replace(marker, cleanup + marker, 1)
+launch_py.write_text(text, encoding="utf-8")
+
+html = launcher / "frontend" / "nether-glass-launcher-standalone.html"
+text = html.read_text(encoding="utf-8")
+text = text.replace("윤슬 런처 0.3.9", "윤슬 런처 0.4.1")
+text = text.replace(
+    "구형 낙인·장부 파일을 윤띵으로 자동 교체하고 윤슬 코어 배포 방식을 바로잡았습니다.",
+    "원본 클라이언트 코어 기반으로 허브·HUD·단축어·설정 기능을 복원했습니다.",
+)
+html.write_text(text, encoding="utf-8")
