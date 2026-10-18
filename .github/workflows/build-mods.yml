@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'mods/**'
+      - 'launcher-src-*.zip.part-*'
       - '.github/workflows/build-mods.yml'
 
 permissions:
