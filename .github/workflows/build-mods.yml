@@ -61,7 +61,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Unpack launcher source
         shell: pwsh
-        run: Expand-Archive launcher-src-0.3.8.zip launcher
+        run: |
+          New-Item -ItemType Directory -Force launcher | Out-Null
+          tar -xf launcher-src-0.3.8.zip -C launcher
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
