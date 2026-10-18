@@ -46,7 +46,18 @@ public final class YoonseulHubScreen extends Screen {
       else if(left.equals("설정")){addRenderableWidget(b("HUD 배치 변경",x+230,y+76,w-260,38,()->YoonseulCoreClient.message(minecraft,"HUD 배치 화면을 구현 중입니다.")));addRenderableWidget(b("설정 초기화",x+230,y+132,w-260,38,()->{YoonseulCoreClient.config=new YoonseulConfig();YoonseulCoreClient.config.save();rebuildWidgets();}));}
       addRenderableWidget(b("닫기",x+20,y+h-32,80,20,this::onClose));
     }
-    private void openModule(Module m){YoonseulCoreClient.message(minecraft,m.name+" 설정을 선택했습니다.");}
+    private void openModule(Module m){
+      YoonseulConfig c=YoonseulCoreClient.config;
+      switch(m.name){
+        case "계산기" -> minecraft.gui.setScreen(new CalculatorScreen());
+        case "타이머" -> minecraft.gui.setScreen(new TimerScreen(this));
+        case "밝기 조절" -> {c.brightness=!c.brightness;YoonseulCoreClient.changed(minecraft,m.name,c.brightness);}
+        case "자동 달리기" -> {c.autoSprint=!c.autoSprint;YoonseulCoreClient.changed(minecraft,m.name,c.autoSprint);}
+        case "인벤토리 HUD" -> {c.inventoryHud=!c.inventoryHud;YoonseulCoreClient.changed(minecraft,m.name,c.inventoryHud);}
+        case "사용자 지정 시간" -> {c.customTime=!c.customTime;YoonseulCoreClient.changed(minecraft,m.name,c.customTime);}
+        default -> YoonseulCoreClient.message(minecraft,m.name+" 세부 설정을 연결 중입니다.");
+      }
+    }
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float d){
       int x=bx(),y=by(),w=Math.min(840,width-8),h=Math.min(530,height-8);g.fill(0,0,width,height,0xAA080B10);g.fill(x,y,x+w,y+h,0xF5101318);g.fill(x+204,y+8,x+206,y+h-8,0xFF30343B);
       g.text(font,"윤슬 클라이언트 허브",x+20,y+22,0xFFF4F6FA,false);g.text(font,left,x+230,y+24,0xFFFFFFFF,false);

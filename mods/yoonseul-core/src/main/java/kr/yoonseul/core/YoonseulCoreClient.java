@@ -16,6 +16,8 @@ public final class YoonseulCoreClient implements ClientModInitializer {
     static YoonseulConfig config;
     private KeyMapping hub, quick, calc, shortcuts, brightness, time, inventory;
     private KeyMapping autoSprint, zoom, recentTimer, timer, camera;
+    private Integer savedFov;
+    private Double savedGamma;
 
     private static KeyMapping key(String id, int glfw) {
         return KeyMappingHelper.registerKeyMapping(new KeyMapping(
@@ -45,10 +47,34 @@ public final class YoonseulCoreClient implements ClientModInitializer {
         while (autoSprint.consumeClick()) { config.autoSprint = !config.autoSprint; changed(mc, "자동 달리기", config.autoSprint); }
         while (inventory.consumeClick()) { config.inventoryHud = !config.inventoryHud; changed(mc, "인벤토리 HUD", config.inventoryHud); }
         while (time.consumeClick()) { config.customTime = true; config.timePreset = (config.timePreset + 1) % 4; config.save(); message(mc, "시간 프리셋: " + new String[]{"낮", "노을", "밤", "서버 시간"}[config.timePreset]); }
-        while (calc.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("계산기"));
+        while (calc.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new CalculatorScreen());
         while (shortcuts.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("단축어"));
         while (timer.consumeClick() || recentTimer.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("타이머"));
         while (camera.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("프리뷰 카메라"));
+        applyLiveFeatures(mc);
+    }
+
+    private void applyLiveFeatures(Minecraft mc) {
+        try {
+            if (zoom.isDown()) {
+                if (savedFov == null) savedFov = mc.options.fov().get();
+                mc.options.fov().set(config.zoomFov);
+            } else if (savedFov != null) {
+                mc.options.fov().set(savedFov); savedFov = null;
+            }
+            if (config.brightness) {
+                if (savedGamma == null) savedGamma = mc.options.gamma().get();
+                mc.options.gamma().set(16.0D);
+            } else if (savedGamma != null) {
+                mc.options.gamma().set(savedGamma); savedGamma = null;
+            }
+            if (config.autoSprint && mc.player != null && mc.gui.screen() == null) {
+                mc.options.keyUp.setDown(true); mc.options.keySprint.setDown(true);
+            }
+            if (config.customTime && config.timePreset < 3 && mc.level != null) {
+                mc.level.setDayTime(new long[]{1000L,12000L,18000L}[config.timePreset]);
+            }
+        } catch (Throwable ignored) {}
     }
 
     static void changed(Minecraft mc, String name, boolean on) { config.save(); message(mc, name + (on ? " 켜짐" : " 꺼짐")); }
