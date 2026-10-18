@@ -62,8 +62,14 @@ jobs:
       - name: Unpack launcher source
         shell: pwsh
         run: |
+          $output = [System.IO.File]::Create("launcher-src-0.3.8.fixed.zip")
+          Get-ChildItem "launcher-src-0.3.8.zip.part-*" | Sort-Object Name | ForEach-Object {
+            $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
+            $output.Write($bytes, 0, $bytes.Length)
+          }
+          $output.Close()
           New-Item -ItemType Directory -Force launcher | Out-Null
-          tar -xf launcher-src-0.3.8.zip -C launcher
+          tar -xf launcher-src-0.3.8.fixed.zip -C launcher
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
