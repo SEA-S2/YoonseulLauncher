@@ -1,4 +1,15 @@
 {
-  "key.yoonseul_core.open_hub": "윤슬 허브 열기",
-  "key.category.yoonseul_core.main": "윤슬 코어"
+  "key.category.yoonseul_core.client": "윤슬 클라이언트",
+  "key.yoonseul_core.calculator": "계산기 열기",
+  "key.yoonseul_core.shortcuts": "단축어 열기",
+  "key.yoonseul_core.brightness": "밝기 조절 토글",
+  "key.yoonseul_core.time_preset": "시간 프리셋 순환",
+  "key.yoonseul_core.inventory_hud": "인벤토리 HUD (홀드)",
+  "key.yoonseul_core.auto_sprint": "자동 달리기 토글",
+  "key.yoonseul_core.zoom": "줌 (홀드)",
+  "key.yoonseul_core.recent_timer": "최근 타이머 시작",
+  "key.yoonseul_core.quick_menu": "퀵메뉴 열기",
+  "key.yoonseul_core.open_hub": "클라이언트 허브",
+  "key.yoonseul_core.timer": "타이머 열기",
+  "key.yoonseul_core.preview_camera": "프리뷰 카메라"
 }

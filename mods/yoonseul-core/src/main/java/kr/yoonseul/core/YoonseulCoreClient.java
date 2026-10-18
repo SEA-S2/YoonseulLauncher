@@ -6,29 +6,51 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
-/** Minecraft 26.2 전용 윤슬 클라이언트 진입점. */
 public final class YoonseulCoreClient implements ClientModInitializer {
-    private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
-            Identifier.fromNamespaceAndPath("yoonseul_core", "main"));
-    private KeyMapping openHub;
+    static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
+            Identifier.fromNamespaceAndPath("yoonseul_core", "client"));
+    static YoonseulConfig config;
+    private KeyMapping hub, quick, calc, shortcuts, brightness, time, inventory;
+    private KeyMapping autoSprint, zoom, recentTimer, timer, camera;
 
-    @Override
-    public void onInitializeClient() {
-        openHub = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "key.yoonseul_core.open_hub",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
-                CATEGORY));
+    private static KeyMapping key(String id, int glfw) {
+        return KeyMappingHelper.registerKeyMapping(new KeyMapping(
+                "key.yoonseul_core." + id, InputConstants.Type.KEYSYM, glfw, CATEGORY));
+    }
 
+    @Override public void onInitializeClient() {
+        config = YoonseulConfig.load();
+        calc = key("calculator", GLFW.GLFW_KEY_UNKNOWN);
+        shortcuts = key("shortcuts", GLFW.GLFW_KEY_UNKNOWN);
+        brightness = key("brightness", GLFW.GLFW_KEY_UNKNOWN);
+        time = key("time_preset", GLFW.GLFW_KEY_UNKNOWN);
+        inventory = key("inventory_hud", GLFW.GLFW_KEY_UNKNOWN);
+        autoSprint = key("auto_sprint", GLFW.GLFW_KEY_UNKNOWN);
+        zoom = key("zoom", GLFW.GLFW_KEY_Z);
+        recentTimer = key("recent_timer", GLFW.GLFW_KEY_UNKNOWN);
+        quick = key("quick_menu", GLFW.GLFW_KEY_C);
+        hub = key("open_hub", GLFW.GLFW_KEY_RIGHT_SHIFT);
+        timer = key("timer", GLFW.GLFW_KEY_UNKNOWN);
+        camera = key("preview_camera", GLFW.GLFW_KEY_UNKNOWN);
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
     }
 
-    private void tick(Minecraft client) {
-        while (openHub.consumeClick()) {
-            if (client.gui.screen() == null) client.gui.setScreen(new YoonseulHubScreen());
-        }
+    private void tick(Minecraft mc) {
+        while (hub.consumeClick() || quick.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen());
+        while (brightness.consumeClick()) { config.brightness = !config.brightness; changed(mc, "밝기 조절", config.brightness); }
+        while (autoSprint.consumeClick()) { config.autoSprint = !config.autoSprint; changed(mc, "자동 달리기", config.autoSprint); }
+        while (inventory.consumeClick()) { config.inventoryHud = !config.inventoryHud; changed(mc, "인벤토리 HUD", config.inventoryHud); }
+        while (time.consumeClick()) { config.customTime = true; config.timePreset = (config.timePreset + 1) % 4; config.save(); message(mc, "시간 프리셋: " + new String[]{"낮", "노을", "밤", "서버 시간"}[config.timePreset]); }
+        while (calc.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("계산기"));
+        while (shortcuts.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("단축어"));
+        while (timer.consumeClick() || recentTimer.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("타이머"));
+        while (camera.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("프리뷰 카메라"));
     }
+
+    static void changed(Minecraft mc, String name, boolean on) { config.save(); message(mc, name + (on ? " 켜짐" : " 꺼짐")); }
+    static void message(Minecraft mc, String s) { if (mc.player != null) mc.player.sendSystemMessage(Component.literal("§b[윤슬] §f" + s)); }
 }
