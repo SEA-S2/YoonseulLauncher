@@ -35,6 +35,8 @@ jobs:
           gradle -q printCompileClasspath > /tmp/girinworld-classpath.txt
           CP="$(tail -n 1 /tmp/girinworld-classpath.txt)"
           javap -classpath "$CP" -private -s net.minecraft.client.gui.Gui
+          javap -classpath "$CP" -private -s net.minecraft.client.gui.Hud
+          javap -classpath "$CP" -private -s net.minecraft.client.renderer.state.gui.GuiRenderState
       - uses: actions/upload-artifact@v4
         with:
           name: girinworld-core-26.2
