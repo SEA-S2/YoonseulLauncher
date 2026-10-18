@@ -99,7 +99,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create v0.3.8 YoonseulLauncher-0.3.8-Windows.zip `
+          gh release upload v0.3.8 YoonseulLauncher-0.3.8-Windows.zip --clobber
+          gh release edit v0.3.8 `
             --title "윤슬 런처 0.3.8" `
-            --notes "동글랜드 비공개 코어를 제거하고 Minecraft 26.2용 독립 윤슬 코어로 교체했습니다.`n`n- 오른쪽 Shift 윤슬 허브`n- 윤띵 0.2.1 이름 및 명령어 반영`n- 기존 낙인/동글랜드 코어 의존성 제거" `
+            --notes "동글랜드 비공개 코어를 제거하고 Minecraft 26.2용 독립 윤슬 코어로 교체했습니다.`n`n- 오른쪽 Shift 윤슬 허브`n- 윤띵 0.2.1 이름 및 명령어 반영`n- 메인 화면의 0.3.8 업데이트 소식 반영`n- 기존 낙인/동글랜드 코어 의존성 제거" `
             --latest
