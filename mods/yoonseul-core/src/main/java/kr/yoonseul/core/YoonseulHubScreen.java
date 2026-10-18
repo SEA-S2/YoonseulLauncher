@@ -25,26 +25,29 @@ public final class YoonseulHubScreen extends Screen {
       new Module("이동 속도","수평 이동 속도를 HUD에 표시","정보"),new Module("아이템 개수","든 아이템의 인벤토리 전체 합계","정보"),
       new Module("키입력 표시","WASD·점프·달리기·마우스 CPS","정보"));
     private static final String[] CATS={"전체","도구","채팅","카메라","조작","시각","편의","정보"};
-    private String category="전체", left="모드"; private int page=0; private final String section;
-    public YoonseulHubScreen(){this("모드");} public YoonseulHubScreen(String section){super(Component.literal("윤슬 클라이언트 허브"));this.section=section;}
+    private String category="전체", left="모드"; private int page=0;
+    public YoonseulHubScreen(){this("모드");} public YoonseulHubScreen(String section){super(Component.literal("윤슬 클라이언트 허브"));this.left=section;}
     private Button b(String s,int x,int y,int w,int h,Runnable r){return Button.builder(Component.literal(s),v->r.run()).bounds(x,y,w,h).build();}
     private List<Module> filtered(){return MODULES.stream().filter(m->category.equals("전체")||m.cat.equals(category)).toList();}
-    private int bx(){return (width-Math.min(840,width-8))/2;} private int by(){return Math.max(4,(height-Math.min(530,height-8))/2);}
+    /* Minecraft GUI coordinates are scaled. 420x270 here renders at about
+       840x540 physical pixels with the common GUI scale, matching the source client. */
+    private int panelW(){return Math.min(420,width-8);} private int panelH(){return Math.min(270,height-8);}
+    private int bx(){return (width-panelW())/2;} private int by(){return Math.max(4,(height-panelH())/2);}
     @Override protected void init(){
-      int x=bx(),y=by(),w=Math.min(840,width-8),h=Math.min(530,height-8);
+      int x=bx(),y=by(),w=panelW(),h=panelH();
       String[] lefts={"소셜","모드","단축어","스킨","치장","설정"};
-      for(int i=0;i<lefts.length;i++){String n=lefts[i];addRenderableWidget(b(n,x+14,y+64+i*48,176,32,()->{left=n;page=0;rebuildWidgets();}));}
+      for(int i=0;i<lefts.length;i++){String n=lefts[i];addRenderableWidget(b(n,x+8,y+44+i*31,88,20,()->{left=n;page=0;rebuildWidgets();}));}
       if(left.equals("모드")){
-        int cw=(w-226)/8; for(int i=0;i<CATS.length;i++){String c=CATS[i];addRenderableWidget(b(c,x+220+i*cw,y+18,cw-4,28,()->{category=c;page=0;rebuildWidgets();}));}
+        int cw=(w-112)/8; for(int i=0;i<CATS.length;i++){String c=CATS[i];addRenderableWidget(b(c,x+108+i*cw,y+12,cw-2,18,()->{category=c;page=0;rebuildWidgets();}));}
         List<Module> ms=filtered(); int from=Math.min(page*8,Math.max(0,ms.size()-1)),to=Math.min(from+8,ms.size());
-        for(int i=from;i<to;i++){Module m=ms.get(i);int p=i-from,col=p%2,row=p/2,cx=x+220+col*((w-238)/2+12),cy=y+70+row*102;
-          addRenderableWidget(b("설정 ›",cx+(w-238)/2-78,cy+65,66,20,()->openModule(m)));
+        for(int i=from;i<to;i++){Module m=ms.get(i);int p=i-from,col=p%2,row=p/2,cx=x+108+col*((w-116)/2+6),cy=y+42+row*50;
+          addRenderableWidget(b("설정 ›",cx+(w-116)/2-43,cy+29,38,13,()->openModule(m)));
         }
-        if(from>0)addRenderableWidget(b("‹ 이전",x+w-180,y+h-32,72,20,()->{page--;rebuildWidgets();}));
-        if(to<ms.size())addRenderableWidget(b("다음 ›",x+w-96,y+h-32,72,20,()->{page++;rebuildWidgets();}));
-      }else if(left.equals("단축어")){addRenderableWidget(b("+ 단축어 추가",x+230,y+76,180,28,()->minecraft.gui.setScreen(new ShortcutScreen(this))));}
-      else if(left.equals("설정")){addRenderableWidget(b("HUD 배치 변경",x+230,y+76,w-260,38,()->YoonseulCoreClient.message(minecraft,"HUD 배치 화면을 구현 중입니다.")));addRenderableWidget(b("설정 초기화",x+230,y+132,w-260,38,()->{YoonseulCoreClient.config=new YoonseulConfig();YoonseulCoreClient.config.save();rebuildWidgets();}));}
-      addRenderableWidget(b("닫기",x+20,y+h-32,80,20,this::onClose));
+        if(from>0)addRenderableWidget(b("‹ 이전",x+w-92,y+h-20,40,14,()->{page--;rebuildWidgets();}));
+        if(to<ms.size())addRenderableWidget(b("다음 ›",x+w-48,y+h-20,40,14,()->{page++;rebuildWidgets();}));
+      }else if(left.equals("단축어")){addRenderableWidget(b("+ 단축어 추가",x+116,y+48,90,18,()->minecraft.gui.setScreen(new ShortcutScreen(this))));}
+      else if(left.equals("설정")){addRenderableWidget(b("HUD 배치 변경",x+116,y+48,w-130,24,()->YoonseulCoreClient.message(minecraft,"HUD 배치 화면은 다음 빌드에서 연결됩니다.")));addRenderableWidget(b("설정 초기화",x+116,y+82,w-130,24,()->{YoonseulCoreClient.config=new YoonseulConfig();YoonseulCoreClient.config.save();rebuildWidgets();}));}
+      addRenderableWidget(b("닫기",x+10,y+h-24,78,16,this::onClose));
     }
     private void openModule(Module m){
       YoonseulConfig c=YoonseulCoreClient.config;
@@ -59,13 +62,13 @@ public final class YoonseulHubScreen extends Screen {
       }
     }
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float d){
-      int x=bx(),y=by(),w=Math.min(840,width-8),h=Math.min(530,height-8);g.fill(0,0,width,height,0xAA080B10);g.fill(x,y,x+w,y+h,0xF5101318);g.fill(x+204,y+8,x+206,y+h-8,0xFF30343B);
-      g.text(font,"윤슬 클라이언트 허브",x+20,y+22,0xFFF4F6FA,false);g.text(font,left,x+230,y+24,0xFFFFFFFF,false);
-      if(left.equals("모드")){List<Module> ms=filtered();int from=Math.min(page*8,Math.max(0,ms.size()-1)),to=Math.min(from+8,ms.size());for(int i=from;i<to;i++){Module m=ms.get(i);int p=i-from,col=p%2,row=p/2,cx=x+220+col*((w-238)/2+12),cy=y+70+row*102,cw=(w-238)/2;g.fill(cx,cy,cx+cw,cy+90,0xFF383B41);g.fill(cx,cy,cx+4,cy+90,0xFFF0F3F8);g.text(font,m.name,cx+18,cy+14,0xFFFFFFFF,false);g.text(font,m.desc,cx+18,cy+38,0xFFCDD0D6,false);}}
-      else if(left.equals("단축어")){g.text(font,"자주 쓰는 명령과 문장을 원하는 키에 지정합니다.",x+230,y+54,0xFFB9BDC5,false);}
-      else if(left.equals("설정")){g.text(font,"모듈별 설정은 각 모드 카드에서 조절하세요.",x+230,y+54,0xFFB9BDC5,false);}
-      else g.text(font,"이 메뉴는 윤슬 서버 기능에 맞춰 추가될 예정입니다.",x+230,y+70,0xFFB9BDC5,false);
-      g.text(font,"RShift 닫기",x+20,y+h-54,0xFF8F949D,false);super.extractRenderState(g,mx,my,d);
+      int x=bx(),y=by(),w=panelW(),h=panelH();g.fill(0,0,width,height,0xAA080B10);g.fill(x,y,x+w,y+h,0xF5101318);g.fill(x+102,y+8,x+104,y+h-8,0xFF30343B);
+      g.text(font,"윤슬 클라이언트 허브",x+10,y+14,0xFFF4F6FA,false);
+      if(left.equals("모드")){List<Module> ms=filtered();int from=Math.min(page*8,Math.max(0,ms.size()-1)),to=Math.min(from+8,ms.size());for(int i=from;i<to;i++){Module m=ms.get(i);int p=i-from,col=p%2,row=p/2,cx=x+108+col*((w-116)/2+6),cy=y+42+row*50,cw=(w-116)/2;g.fill(cx,cy,cx+cw,cy+44,0xFF383B41);g.fill(cx,cy,cx+3,cy+44,0xFFF0F3F8);g.text(font,m.name,cx+9,cy+7,0xFFFFFFFF,false);g.text(font,m.desc,cx+9,cy+19,0xFFCDD0D6,false);}}
+      else if(left.equals("단축어")){g.text(font,"자주 쓰는 명령과 문장을 원하는 키에 지정합니다.",x+116,y+34,0xFFB9BDC5,false);}
+      else if(left.equals("설정")){g.text(font,"모듈별 설정은 각 모드 카드에서 조절하세요.",x+116,y+34,0xFFB9BDC5,false);}
+      else g.text(font,"윤슬 서버 기능에 맞춰 준비 중입니다.",x+116,y+48,0xFFB9BDC5,false);
+      g.text(font,"RShift 닫기",x+10,y+h-38,0xFF8F949D,false);super.extractRenderState(g,mx,my,d);
     }
     @Override public boolean isPauseScreen(){return false;}
 }
