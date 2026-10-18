@@ -17,17 +17,12 @@ meta.write_text(text, encoding="utf-8")
 launch_py = launcher / "launcher.py"
 text = launch_py.read_text(encoding="utf-8")
 old = '"jvmArguments": [f"-Xmx{max_mem_mb}M"],'
-new = (
-    '"jvmArguments": [f"-Xmx{max_mem_mb}M", '
-    'f"-javaagent:{os.path.join(getattr(sys, \'_MEIPASS\', os.path.dirname(__file__)), '
-    "\'assets\', \'yoonseul-client-core.jar\')}"],"
-)
+new = '''"jvmArguments": [f"-Xmx{max_mem_mb}M", f"-javaagent:{os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(__file__)), 'assets', 'yoonseul-client-core.jar')}"],'''
 if old not in text:
     raise SystemExit("launcher.py JVM argument marker not found")
 text = text.replace(old, new)
 marker = "    return _command.get_minecraft_command(\n"
-cleanup = """    # The original client is loaded as a Java agent. Remove the temporary
-    # Fabric replacement so RShift and HUD hooks cannot collide with it.
+cleanup = """    # Load the original client as a Java agent without the temporary Fabric replacement.
     mods_dir = os.path.join(instance.instance_dir(), "mods")
     if os.path.isdir(mods_dir):
         for filename in os.listdir(mods_dir):
