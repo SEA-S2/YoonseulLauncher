@@ -1,7 +1,6 @@
 package kr.yoonseul.core;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -23,17 +22,9 @@ public final class YoonseulHubScreen extends Screen {
         int x = (this.width - w) / 2;
         int y = Math.max(18, (this.height - 260) / 2);
 
-        addRenderableWidget(Button.builder(Component.literal("윤띵 열기"), b -> openLedger())
-                .bounds(x + 24, y + 172, 120, 24).build());
-        addRenderableWidget(Button.builder(Component.literal("닫기"), b -> onClose())
+        addRenderableWidget(net.minecraft.client.gui.components.Button.builder(
+                Component.literal("닫기"), b -> onClose())
                 .bounds(x + w - 104, y + 172, 80, 24).build());
-    }
-
-    private void openLedger() {
-        if (this.minecraft != null && this.minecraft.player != null) {
-            this.onClose();
-            this.minecraft.player.connection.sendCommand("윤띵");
-        }
     }
 
     @Override
@@ -52,7 +43,7 @@ public final class YoonseulHubScreen extends Screen {
         ctx.fill(x + 24, y + 70, x + w - 24, y + 146, CARD);
         ctx.text(this.font, "윤슬런처 클라이언트", x + 40, y + 88, TEXT, false);
         ctx.text(this.font, "오른쪽 Shift로 언제든 다시 열 수 있어요.", x + 40, y + 110, MUTED, false);
-        ctx.text(this.font, "동글랜드 비공개 코어를 사용하지 않는 독립 구현입니다.", x + 40, y + 128, MUTED, false);
+        ctx.text(this.font, "윤슬 전용 클라이언트 기능을 관리하는 화면입니다.", x + 40, y + 128, MUTED, false);
 
         super.extractRenderState(ctx, mouseX, mouseY, delta);
     }

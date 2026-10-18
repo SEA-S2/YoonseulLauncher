@@ -57,6 +57,7 @@ jobs:
           if-no-files-found: error
 
   build-launcher:
+    needs: [build-core, build-ledger]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -71,6 +72,14 @@ jobs:
           $output.Close()
           New-Item -ItemType Directory -Force launcher | Out-Null
           tar -xf launcher-src-0.3.8.fixed.zip -C launcher
+      - uses: actions/download-artifact@v4
+        with:
+          name: yoonseul-core-fabric-0.1.0
+          path: launcher/assets
+      - uses: actions/download-artifact@v4
+        with:
+          name: yoonseul-ledger-fabric-0.2.1
+          path: launcher/assets
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -87,21 +96,23 @@ jobs:
         run: Copy-Item launcher/launcher_config.json launcher/dist/launcher_config.json
       - uses: actions/upload-artifact@v4
         with:
-          name: YoonseulLauncher-0.3.8-Windows
+          name: YoonseulLauncher-0.3.9-Windows
           path: |
             launcher/dist/YoonseulLauncher.exe
             launcher/dist/launcher_config.json
           if-no-files-found: error
       - name: Package release ZIP
         shell: pwsh
-        run: Compress-Archive -Path launcher/dist/YoonseulLauncher.exe,launcher/dist/launcher_config.json -DestinationPath YoonseulLauncher-0.3.8-Windows.zip
-      - name: Publish 0.3.8 release
+        run: Compress-Archive -Path launcher/dist/YoonseulLauncher.exe,launcher/dist/launcher_config.json -DestinationPath YoonseulLauncher-0.3.9-Windows.zip
+      - name: Publish 0.3.9 release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload v0.3.8 YoonseulLauncher-0.3.8-Windows.zip --clobber
-          gh release edit v0.3.8 `
-            --title "윤슬 런처 0.3.8" `
-            --notes "동글랜드 비공개 코어를 제거하고 Minecraft 26.2용 독립 윤슬 코어로 교체했습니다.`n`n- 오른쪽 Shift 윤슬 허브`n- 윤띵 0.2.1 이름 및 명령어 반영`n- 메인 화면의 0.3.8 업데이트 소식 반영`n- 기존 낙인/동글랜드 코어 의존성 제거" `
+          gh release view v0.3.9 *> $null
+          if ($LASTEXITCODE -ne 0) { gh release create v0.3.9 --title "윤슬 런처 0.3.9" --notes "윤띵 교체 오류 수정" }
+          gh release upload v0.3.9 YoonseulLauncher-0.3.9-Windows.zip --clobber
+          gh release edit v0.3.9 `
+            --title "윤슬 런처 0.3.9" `
+            --notes "구형 낙인·윤슬 장부 JAR을 윤띵 0.2.1로 자동 교체합니다.`n`n- /윤띵 명령어 정상 등록`n- 낙인 중복 로딩 방지`n- 허브의 잘못된 윤띵 열기 버튼 제거`n- 새로 빌드한 코어와 윤띵 JAR을 런처에 직접 포함" `
             --latest
