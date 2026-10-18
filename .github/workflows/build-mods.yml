@@ -43,7 +43,9 @@ jobs:
         with:
           gradle-version: '9.7.1'
       - name: Unpack Yoondding source
-        run: unzip -q mods/yoonseul-helper-src.zip -d build/yoonseul-helper
+        run: |
+          mkdir -p build/yoonseul-helper
+          unzip -q mods/yoonseul-helper-src.zip -d build/yoonseul-helper
       - name: Build Yoondding
         working-directory: build/yoonseul-helper
         run: gradle :fabric:build -x test --stacktrace
