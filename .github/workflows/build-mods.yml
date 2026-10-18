@@ -73,6 +73,9 @@ jobs:
           $output.Close()
           New-Item -ItemType Directory -Force launcher | Out-Null
           tar -xf launcher-src-0.3.8.fixed.zip -C launcher
+          (Get-Content launcher/app_meta.py -Raw).Replace('APP_VERSION = "0.3.9"','APP_VERSION = "0.4.0"') | Set-Content launcher/app_meta.py -Encoding utf8
+          (Get-Content launcher/mod_catalog.py -Raw).Replace('yoonseul-core-fabric-0.1.0.jar','yoonseul-core-fabric-0.2.0.jar').Replace('"bundled_version": "0.1.0"','"bundled_version": "0.2.0"') | Set-Content launcher/mod_catalog.py -Encoding utf8
+          (Get-Content launcher/frontend/nether-glass-launcher-standalone.html -Raw).Replace('윤슬 런처 0.3.9','윤슬 런처 0.4.0').Replace('구형 낙인·장부 파일을 윤띵으로 자동 교체하고 윤슬 코어 배포 방식을 바로잡았습니다.','새 클라이언트 허브와 계산기·타이머·줌·밝기·자동 달리기 기능을 추가했습니다.') | Set-Content launcher/frontend/nether-glass-launcher-standalone.html -Encoding utf8
       - uses: actions/download-artifact@v4
         with:
           name: yoonseul-core-fabric-0.2.0
@@ -97,23 +100,23 @@ jobs:
         run: Copy-Item launcher/launcher_config.json launcher/dist/launcher_config.json
       - uses: actions/upload-artifact@v4
         with:
-          name: YoonseulLauncher-0.3.9-Windows
+          name: YoonseulLauncher-0.4.0-Windows
           path: |
             launcher/dist/YoonseulLauncher.exe
             launcher/dist/launcher_config.json
           if-no-files-found: error
       - name: Package release ZIP
         shell: pwsh
-        run: Compress-Archive -Path launcher/dist/YoonseulLauncher.exe,launcher/dist/launcher_config.json -DestinationPath YoonseulLauncher-0.3.9-Windows.zip
-      - name: Publish 0.3.9 release
+        run: Compress-Archive -Path launcher/dist/YoonseulLauncher.exe,launcher/dist/launcher_config.json -DestinationPath YoonseulLauncher-0.4.0-Windows.zip
+      - name: Publish 0.4.0 release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v0.3.9 *> $null
-          if ($LASTEXITCODE -ne 0) { gh release create v0.3.9 --title "윤슬 런처 0.3.9" --notes "윤띵 교체 오류 수정" }
-          gh release upload v0.3.9 YoonseulLauncher-0.3.9-Windows.zip --clobber
-          gh release edit v0.3.9 `
-            --title "윤슬 런처 0.3.9" `
-            --notes "구형 낙인·윤슬 장부 JAR을 윤띵 0.2.1로 자동 교체합니다.`n`n- /윤띵 명령어 정상 등록`n- 낙인 중복 로딩 방지`n- 허브의 잘못된 윤띵 열기 버튼 제거`n- 새로 빌드한 코어와 윤띵 JAR을 런처에 직접 포함" `
+          gh release view v0.4.0 *> $null
+          if ($LASTEXITCODE -ne 0) { gh release create v0.4.0 --title "윤슬 런처 0.4.0" --notes "윤슬 클라이언트 허브 첫 기능판" }
+          gh release upload v0.4.0 YoonseulLauncher-0.4.0-Windows.zip --clobber
+          gh release edit v0.4.0 `
+            --title "윤슬 런처 0.4.0" `
+            --notes "윤슬 클라이언트 허브 첫 기능판입니다.`n`n- 동글랜드와 분리된 윤슬 전용 허브`n- 모드 카테고리 및 카드 화면`n- 계산기와 타이머`n- 줌, 밝기 조절, 자동 달리기`n- 키 설정과 설정 저장`n- 발전과제 항목 제외" `
             --latest
