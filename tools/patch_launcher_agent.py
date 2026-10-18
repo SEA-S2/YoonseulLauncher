@@ -1,4 +1,4 @@
-"""Prepare the launcher to use the original client core as a Java agent."""
+"""Prepare the launcher to use the Girinworld 26.2 client core as a Java agent."""
 from pathlib import Path
 import shutil
 import sys
@@ -11,7 +11,7 @@ shutil.copy2(agent_source, assets / "yoonseul-client-core.jar")
 
 meta = launcher / "app_meta.py"
 text = meta.read_text(encoding="utf-8")
-text = text.replace('APP_VERSION = "0.3.9"', 'APP_VERSION = "0.4.1"')
+text = text.replace('APP_VERSION = "0.3.9"', 'APP_VERSION = "0.4.3"')
 meta.write_text(text, encoding="utf-8")
 
 launch_py = launcher / "launcher.py"
@@ -22,7 +22,7 @@ if old not in text:
     raise SystemExit("launcher.py JVM argument marker not found")
 text = text.replace(old, new)
 marker = "    return _command.get_minecraft_command(\n"
-cleanup = """    # Load the original client as a Java agent without the temporary Fabric replacement.
+cleanup = """    # Load the Girinworld client core as a Java agent without the temporary Fabric replacement.
     mods_dir = os.path.join(instance.instance_dir(), "mods")
     if os.path.isdir(mods_dir):
         for filename in os.listdir(mods_dir):
@@ -40,9 +40,9 @@ launch_py.write_text(text, encoding="utf-8")
 
 html = launcher / "frontend" / "nether-glass-launcher-standalone.html"
 text = html.read_text(encoding="utf-8")
-text = text.replace("윤슬 런처 0.3.9", "윤슬 런처 0.4.1")
+text = text.replace("윤슬 런처 0.3.9", "윤슬 런처 0.4.3")
 text = text.replace(
     "구형 낙인·장부 파일을 윤띵으로 자동 교체하고 윤슬 코어 배포 방식을 바로잡았습니다.",
-    "원본 클라이언트 코어 기반으로 허브·HUD·단축어·설정 기능을 복원했습니다.",
+    "기존 허브·HUD·단축키·설정 기능을 기린월드 26.2 코어로 전환했습니다.",
 )
 html.write_text(text, encoding="utf-8")
