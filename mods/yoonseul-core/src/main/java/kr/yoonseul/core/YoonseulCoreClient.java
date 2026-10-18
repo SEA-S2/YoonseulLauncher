@@ -49,7 +49,7 @@ public final class YoonseulCoreClient implements ClientModInitializer {
         while (time.consumeClick()) { config.customTime = true; config.timePreset = (config.timePreset + 1) % 4; config.save(); message(mc, "시간 프리셋: " + new String[]{"낮", "노을", "밤", "서버 시간"}[config.timePreset]); }
         while (calc.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new CalculatorScreen());
         while (shortcuts.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("단축어"));
-        while (timer.consumeClick() || recentTimer.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("타이머"));
+        while (timer.consumeClick() || recentTimer.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new TimerScreen(new YoonseulHubScreen()));
         while (camera.consumeClick()) if (mc.gui.screen() == null) mc.gui.setScreen(new YoonseulHubScreen("프리뷰 카메라"));
         applyLiveFeatures(mc);
     }
@@ -70,9 +70,6 @@ public final class YoonseulCoreClient implements ClientModInitializer {
             }
             if (config.autoSprint && mc.player != null && mc.gui.screen() == null) {
                 mc.options.keyUp.setDown(true); mc.options.keySprint.setDown(true);
-            }
-            if (config.customTime && config.timePreset < 3 && mc.level != null) {
-                mc.level.setDayTime(new long[]{1000L,12000L,18000L}[config.timePreset]);
             }
         } catch (Throwable ignored) {}
     }
