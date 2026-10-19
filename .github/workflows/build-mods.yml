@@ -68,23 +68,23 @@ jobs:
         run: Copy-Item launcher_config.json dist/launcher_config.json
       - uses: actions/upload-artifact@v4
         with:
-          name: Yoonseul_Launcher-2.6.1-Windows
+          name: Yoonseul_Launcher-2.6.2-Windows
           path: |
             dist/Yoonseul_Launcher.exe
             dist/launcher_config.json
           if-no-files-found: error
       - name: Package release ZIP
         shell: pwsh
-        run: Compress-Archive -Path dist/Yoonseul_Launcher.exe,dist/launcher_config.json -DestinationPath Yoonseul_Launcher-2.6.1-Windows.zip
-      - name: Publish 2.6.1 release
+        run: Compress-Archive -Path dist/Yoonseul_Launcher.exe,dist/launcher_config.json -DestinationPath Yoonseul_Launcher-2.6.2-Windows.zip
+      - name: Publish 2.6.2 release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v2.6.1 *> $null
-          if ($LASTEXITCODE -ne 0) { gh release create v2.6.1 --title "윤슬 런처 릴리스 2.6.1" --notes "Minecraft 26.2 허브 호환 수정" }
-          gh release upload v2.6.1 Yoonseul_Launcher-2.6.1-Windows.zip --clobber
-          gh release edit v2.6.1 `
-            --title "윤슬 런처 릴리스 2.6.1" `
-            --notes "기린월드 Minecraft 26.2 HUD 복원판입니다.`n`n- 기존 동글랜드 허브 UI와 기능 모듈 유지`n- 오른쪽 Shift 허브·단축키·HUD·설정 복원`n- 내부 패키지와 식별자를 기린월드로 변경`n- Minecraft 26.2 대응" `
+          gh release view v2.6.2 *> $null
+          if ($LASTEXITCODE -ne 0) { gh release create v2.6.2 --title "2.6.2" --notes "입력 화면의 오른쪽 Shift 단축키 충돌 수정" }
+          gh release upload v2.6.2 Yoonseul_Launcher-2.6.2-Windows.zip --clobber
+          gh release edit v2.6.2 `
+            --title "2.6.2" `
+            --notes "윤슬 런처 2.6.2 수정판입니다.`n`n- 귓속말·타이머 이름 입력 화면에서 오른쪽 Shift가 허브를 여는 문제 수정`n- 열린 화면 감지 로직을 Minecraft 26.2에 맞게 보완`n- 기존 허브 UI·단축키·HUD·설정 기능 유지" `
             --latest
