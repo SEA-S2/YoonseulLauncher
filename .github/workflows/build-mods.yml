@@ -5,33 +5,19 @@ on:
   push:
     paths:
       - 'mods/**'
-      - 'launcher-src-*.zip.part-*'
+      - '*.py'
+      - '*.spec'
+      - 'frontend/**'
+      - 'assets/**'
+      - 'requirements.txt'
+      - 'launcher_config.json'
+      - 'tools/patch_launcher_agent.py'
       - '.github/workflows/build-mods.yml'
 
 permissions:
   contents: write
 
 jobs:
-  build-core:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '25'
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '9.7.1'
-      - name: Build Yoonseul Core
-        working-directory: mods/yoonseul-core
-        run: gradle build --stacktrace
-      - uses: actions/upload-artifact@v4
-        with:
-          name: yoonseul-core-fabric-0.2.0
-          path: mods/yoonseul-core/build/libs/yoonseul-core-fabric-0.2.0.jar
-          if-no-files-found: error
-
   build-ledger:
     runs-on: ubuntu-latest
     steps:
@@ -58,58 +44,38 @@ jobs:
 
   build-launcher:
     if: github.ref == 'refs/heads/main'
-    needs: [build-core, build-ledger]
+    needs: [build-ledger]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unpack launcher source
-        shell: pwsh
-        run: |
-          $output = [System.IO.File]::Create("launcher-src-0.3.8.fixed.zip")
-          Get-ChildItem "launcher-src-0.3.8.zip.part-*" | Sort-Object Name | ForEach-Object {
-            $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
-            $output.Write($bytes, 0, $bytes.Length)
-          }
-          $output.Close()
-          New-Item -ItemType Directory -Force launcher | Out-Null
-          tar -xf launcher-src-0.3.8.fixed.zip -C launcher
-          (Get-Content launcher/app_meta.py -Raw).Replace('APP_VERSION = "0.3.9"','APP_VERSION = "0.4.5"') | Set-Content launcher/app_meta.py -Encoding utf8
-          (Get-Content launcher/mod_catalog.py -Raw).Replace('yoonseul-core-fabric-0.1.0.jar','yoonseul-core-fabric-0.2.0.jar').Replace('"bundled_version": "0.1.0"','"bundled_version": "0.2.0"') | Set-Content launcher/mod_catalog.py -Encoding utf8
-          (Get-Content launcher/frontend/nether-glass-launcher-standalone.html -Raw).Replace('윤슬 런처 0.3.9','윤슬 런처 0.4.5').Replace('구형 낙인·장부 파일을 윤띵으로 자동 교체하고 윤슬 코어 배포 방식을 바로잡았습니다.','기린월드 26.2 HUD 렌더링 연결을 복원했습니다.') | Set-Content launcher/frontend/nether-glass-launcher-standalone.html -Encoding utf8
-      - uses: actions/download-artifact@v4
-        with:
-          name: yoonseul-core-fabric-0.2.0
-          path: launcher/assets
       - uses: actions/download-artifact@v4
         with:
           name: yoonseul-ledger-fabric-0.2.1
-          path: launcher/assets
+          path: assets
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: launcher/requirements.txt
+          cache-dependency-path: requirements.txt
       - name: Connect Girinworld 26.2 core
-        run: python tools/patch_launcher_agent.py launcher assets/girinworld-core-26.2.jar
+        run: python tools/patch_launcher_agent.py . assets/girinworld-core-26.2.jar
       - name: Install launcher dependencies
-        working-directory: launcher
         run: python -m pip install --upgrade -r requirements.txt
       - name: Build Windows launcher
-        working-directory: launcher
         run: python -m PyInstaller --noconfirm YoonseulLauncher.spec
       - name: Prepare distribution
         shell: pwsh
-        run: Copy-Item launcher/launcher_config.json launcher/dist/launcher_config.json
+        run: Copy-Item launcher_config.json dist/launcher_config.json
       - uses: actions/upload-artifact@v4
         with:
           name: YoonseulLauncher-0.4.5-Windows
           path: |
-            launcher/dist/YoonseulLauncher.exe
-            launcher/dist/launcher_config.json
+            dist/YoonseulLauncher.exe
+            dist/launcher_config.json
           if-no-files-found: error
       - name: Package release ZIP
         shell: pwsh
-        run: Compress-Archive -Path launcher/dist/YoonseulLauncher.exe,launcher/dist/launcher_config.json -DestinationPath YoonseulLauncher-0.4.5-Windows.zip
+        run: Compress-Archive -Path dist/YoonseulLauncher.exe,dist/launcher_config.json -DestinationPath YoonseulLauncher-0.4.5-Windows.zip
       - name: Publish 0.4.5 release
         shell: pwsh
         env:

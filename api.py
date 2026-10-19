@@ -2184,7 +2184,8 @@ class Api:
                 import game_installer
                 # install() 이 검증 통과 후에만 100% 를 내보낸다 (중복 push 금지)
                 game_installer.install(on_progress=_push)
-                # 윤슬 코어 같은 내부 필수 구성요소는 게임 설치에 포함한다.
+                # 숨겨진 필수 Fabric 구성요소는 게임 설치에 포함한다.
+                # 기린월드 코어는 launcher.py에서 Java Agent로 별도 연결한다.
                 self._ensure_hidden_required()
             except Exception as e:
                 import game_installer as _gi

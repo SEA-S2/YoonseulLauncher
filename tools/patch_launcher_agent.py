@@ -7,7 +7,9 @@ launcher = Path(sys.argv[1])
 agent_source = Path(sys.argv[2])
 assets = launcher / "assets"
 assets.mkdir(exist_ok=True)
-shutil.copy2(agent_source, assets / "yoonseul-client-core.jar")
+agent_target = assets / "girinworld-core-26.2.jar"
+if agent_source.resolve() != agent_target.resolve():
+    shutil.copy2(agent_source, agent_target)
 
 meta = launcher / "app_meta.py"
 text = meta.read_text(encoding="utf-8")
@@ -17,7 +19,7 @@ meta.write_text(text, encoding="utf-8")
 launch_py = launcher / "launcher.py"
 text = launch_py.read_text(encoding="utf-8")
 old = '"jvmArguments": [f"-Xmx{max_mem_mb}M"],'
-new = '''"jvmArguments": [f"-Xmx{max_mem_mb}M", f"-javaagent:{os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(__file__)), 'assets', 'yoonseul-client-core.jar')}"],'''
+new = '''"jvmArguments": [f"-Xmx{max_mem_mb}M", f"-javaagent:{os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(__file__)), 'assets', 'girinworld-core-26.2.jar')}"],'''
 if old not in text:
     raise SystemExit("launcher.py JVM argument marker not found")
 text = text.replace(old, new)

@@ -24,23 +24,6 @@ LOADER = "fabric"
 MODS = [
     # ── 필수 ─────────────────────────────────────────────────────────────
     {
-        "id": "yoonseul-core",
-        "name": "윤슬 코어",
-        "slug": None,
-        "bundled_asset": "yoonseul-core-fabric-0.1.0.jar",
-        "bundled_version": "0.1.0",
-        "category": "필수",
-        "required": True,
-        # 런처가 게임 설치 때 자동으로 배치하는 내부 구성요소입니다.
-        # 콘텐츠 목록에서 사용자가 따로 설치하는 항목으로 노출하지 않습니다.
-        "hidden": True,
-        "tags": ["필수", "허브"],
-        "description": "Minecraft 26.2용 윤슬런처 클라이언트 코어입니다.\n"
-                       "오른쪽 Shift로 윤슬 허브를 열 수 있습니다.",
-        "exclusive_group": None,
-        "dependencies": ["fabric-api"],
-    },
-    {
         "id": "fabric-api",
         "name": "Fabric API",
         "slug": "fabric-api",
