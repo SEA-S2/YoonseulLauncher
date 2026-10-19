@@ -138,4 +138,4 @@ Dongleland Launcher의 프로젝트명, 저작자명, 저작권 표시 및 라�
 
 각 구성요소의 전체 라이선스 조건은 해당 프로젝트의 원문과 윤슬런처 배포물에 포함된 라이선스 파일을 따릅니다. 실제 배포물에 다른 라이브러리·글꼴·코드가 추가되면 해당 고지도 이 문서에 추가해야 합니다.
 
-윤슬런처 자체의 라이선스는 저장소 루트의 `LICENSE` 파일을 참고하세요. 누락이나 오류는 https://github.com/SEA-S2/YoonseulLauncher/issues 에 알려주세요.
+윤슬런처 자체의 라이선스는 저장소 루트의 `LICENSE` 파일을 참고하세요. 누락이나 오류는 https://github.com/SEA-S2/Yoonseul_Launcher/issues 에 알려주세요.

@@ -62,20 +62,20 @@ jobs:
       - name: Install launcher dependencies
         run: python -m pip install --upgrade -r requirements.txt
       - name: Build Windows launcher
-        run: python -m PyInstaller --noconfirm YoonseulLauncher.spec
+        run: python -m PyInstaller --noconfirm Yoonseul_Launcher.spec
       - name: Prepare distribution
         shell: pwsh
         run: Copy-Item launcher_config.json dist/launcher_config.json
       - uses: actions/upload-artifact@v4
         with:
-          name: YoonseulLauncher-0.4.5-Windows
+          name: Yoonseul_Launcher-0.4.5-Windows
           path: |
-            dist/YoonseulLauncher.exe
+            dist/Yoonseul_Launcher.exe
             dist/launcher_config.json
           if-no-files-found: error
       - name: Package release ZIP
         shell: pwsh
-        run: Compress-Archive -Path dist/YoonseulLauncher.exe,dist/launcher_config.json -DestinationPath YoonseulLauncher-0.4.5-Windows.zip
+        run: Compress-Archive -Path dist/Yoonseul_Launcher.exe,dist/launcher_config.json -DestinationPath Yoonseul_Launcher-0.4.5-Windows.zip
       - name: Publish 0.4.5 release
         shell: pwsh
         env:
@@ -83,7 +83,7 @@ jobs:
         run: |
           gh release view v0.4.5 *> $null
           if ($LASTEXITCODE -ne 0) { gh release create v0.4.5 --title "윤슬 런처 0.4.5" --notes "Minecraft 26.2 허브 호환 수정" }
-          gh release upload v0.4.5 YoonseulLauncher-0.4.5-Windows.zip --clobber
+          gh release upload v0.4.5 Yoonseul_Launcher-0.4.5-Windows.zip --clobber
           gh release edit v0.4.5 `
             --title "윤슬 런처 0.4.5" `
             --notes "기린월드 Minecraft 26.2 HUD 복원판입니다.`n`n- 기존 동글랜드 허브 UI와 기능 모듈 유지`n- 오른쪽 Shift 허브·단축키·HUD·설정 복원`n- 내부 패키지와 식별자를 기린월드로 변경`n- Minecraft 26.2 대응" `

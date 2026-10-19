@@ -5,7 +5,7 @@ tkinter 파일을 쓰지 않으므로 여기로 분리해 백엔드/브릿지가
 """
 
 APP_NAME = "윤슬 런처"
-APP_NAME_EN = "Yoonseul Launcher"
+APP_NAME_EN = "Yoonseul_Launcher"
 APP_VERSION = "0.3.9"
 # 릴리스 채널: "beta" 면 UI 에 베타 표식을 붙인다. 정식 배포 시 "release" 로.
 APP_CHANNEL = "release"
@@ -13,14 +13,14 @@ APP_CHANNEL = "release"
 # 약관 버전. 내용이 실질적으로 바뀌면 올린다 → 사용자에게 재동의를 받는다.
 TERMS_VERSION = "0.1"
 # 정식 배포 전 윤슬 런처 저장소 주소로 교체하세요.
-_REPO = "https://github.com/SEA-S2/YoonseulLauncher"
+_REPO = "https://github.com/SEA-S2/Yoonseul_Launcher"
 # blob/HEAD 는 GitHub 가 기본 브랜치(main/master)로 알아서 해석한다.
 TERMS_URL = f"{_REPO}/blob/HEAD/TERMS.md" if _REPO else ""
 NOTICES_URL = f"{_REPO}/blob/HEAD/THIRD_PARTY_NOTICES.md" if _REPO else ""
 # 앱 자동 업데이트 확인용 GitHub 저장소. launcher_config.json 값이 우선하며,
 # 그 파일이 없거나 비어 있을 때 아래 값을 사용합니다.
 GITHUB_UPDATE_OWNER = "SEA-S2"
-GITHUB_UPDATE_REPO = "YoonseulLauncher"
+GITHUB_UPDATE_REPO = "Yoonseul_Launcher"
 APP_AUTHOR = "윤슬마을"
 # HKCU\...\Run 값 이름 (Windows 시작 프로그램 등록 — autostart.py).
 # 제품마다 달라야 서로의 등록을 덮어쓰지 않는다.

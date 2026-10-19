@@ -131,7 +131,7 @@ def build_command(account: dict, *, quick_connect: bool = True,
         "token": account["mc_access_token"],
         "executablePath": _java_executable(),
         "jvmArguments": [f"-Xmx{max_mem_mb}M"],
-        "launcherName": "YoonseulLauncher",
+        "launcherName": "Yoonseul_Launcher",
         "launcherVersion": app_meta.APP_VERSION,
         "gameDirectory": instance.instance_dir(),
     }

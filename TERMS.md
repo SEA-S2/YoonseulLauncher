@@ -97,5 +97,5 @@ NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
 ## 9. 프로젝트 및 문의
 
 - 프로젝트: 윤슬런처
-- 저장소: https://github.com/SEA-S2/YoonseulLauncher
+- 저장소: https://github.com/SEA-S2/Yoonseul_Launcher
 - 문의 및 오류 제보: 저장소의 Issues 메뉴

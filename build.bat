@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 
 echo ============================================
-echo  Yoonseul Launcher v0.3.8 - Build Script
+echo  Yoonseul_Launcher v0.3.8 - Build Script
 echo ============================================
 echo.
 
@@ -38,7 +38,7 @@ REM  - bundle frontend/ (HTML + local fonts + app_icon.png) so the UI is found
 REM  - keep assets/ (icons, bundled mod jar) and certifi
 REM  - collect-all webview so pywebview backend + injected JS are included
 %PYCMD% -m PyInstaller --noconfirm --onefile --windowed ^
-    --name "YoonseulLauncher" ^
+    --name "Yoonseul_Launcher" ^
     --icon "assets/app_icon.ico" ^
     --add-data "assets;assets" ^
     --add-data "frontend;frontend" ^
@@ -50,13 +50,13 @@ if %errorlevel% neq 0 ( echo [ERROR] Build failed. Check the log above. & pause 
 echo.
 
 echo [3/3] Checking result ...
-if exist "dist\YoonseulLauncher.exe" (
+if exist "dist\Yoonseul_Launcher.exe" (
     copy /Y "launcher_config.json" "dist\launcher_config.json" >nul
     echo.
-    echo [SUCCESS] dist\YoonseulLauncher.exe created!
-    echo  Location: %cd%\dist\YoonseulLauncher.exe
+    echo [SUCCESS] dist\Yoonseul_Launcher.exe created!
+    echo  Location: %cd%\dist\Yoonseul_Launcher.exe
     echo.
-    echo  Distribution: share YoonseulLauncher.exe and launcher_config.json together.
+    echo  Distribution: share Yoonseul_Launcher.exe and launcher_config.json together.
     echo  ^(assets + frontend are bundled inside the exe^)
     echo.
     echo  Note 1: antivirus may falsely flag the unsigned exe.
