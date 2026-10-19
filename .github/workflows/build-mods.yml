@@ -68,23 +68,23 @@ jobs:
         run: Copy-Item launcher_config.json dist/launcher_config.json
       - uses: actions/upload-artifact@v4
         with:
-          name: Yoonseul_Launcher-2.6.2-Windows
+          name: Yoonseul_Launcher-2.6.3-Windows
           path: |
             dist/Yoonseul_Launcher.exe
             dist/launcher_config.json
           if-no-files-found: error
       - name: Package release ZIP
         shell: pwsh
-        run: Compress-Archive -Path dist/Yoonseul_Launcher.exe,dist/launcher_config.json -DestinationPath Yoonseul_Launcher-2.6.2-Windows.zip
-      - name: Publish 2.6.2 release
+        run: Compress-Archive -Path dist/Yoonseul_Launcher.exe,dist/launcher_config.json -DestinationPath Yoonseul_Launcher-2.6.3-Windows.zip
+      - name: Publish 2.6.3 release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v2.6.2 *> $null
-          if ($LASTEXITCODE -ne 0) { gh release create v2.6.2 --title "2.6.2" --notes "입력 화면의 오른쪽 Shift 단축키 충돌 수정" }
-          gh release upload v2.6.2 Yoonseul_Launcher-2.6.2-Windows.zip --clobber
-          gh release edit v2.6.2 `
-            --title "2.6.2" `
-            --notes "윤슬 런처 2.6.2 수정판입니다.`n`n- 귓속말·타이머 이름 입력 화면에서 오른쪽 Shift가 허브를 여는 문제 수정`n- 열린 화면 감지 로직을 Minecraft 26.2에 맞게 보완`n- 기존 허브 UI·단축키·HUD·설정 기능 유지" `
+          gh release view v2.6.3 *> $null
+          if ($LASTEXITCODE -ne 0) { gh release create v2.6.3 --title "2.6.3" --notes "개발자 알림과 지원 안내 문구 정리" }
+          gh release upload v2.6.3 Yoonseul_Launcher-2.6.3-Windows.zip --clobber
+          gh release edit v2.6.3 `
+            --title "2.6.3" `
+            --notes "윤슬 런처 2.6.3입니다.`n`n- 개발자 알림과 지원 안내 문구 정리`n- 지원 채널 버튼에서 Discord SEA_S2 프로필 연결`n- 2.6.2의 오른쪽 Shift 입력 화면 충돌 수정 포함" `
             --latest

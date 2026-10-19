@@ -13,9 +13,10 @@ if agent_source.resolve() != agent_target.resolve():
 
 meta = launcher / "app_meta.py"
 text = meta.read_text(encoding="utf-8")
-text = text.replace('APP_VERSION = "0.3.9"', 'APP_VERSION = "2.6.2"')
-text = text.replace('APP_VERSION = "0.4.5"', 'APP_VERSION = "2.6.2"')
-text = text.replace('APP_VERSION = "2.6.1"', 'APP_VERSION = "2.6.2"')
+text = text.replace('APP_VERSION = "0.3.9"', 'APP_VERSION = "2.6.3"')
+text = text.replace('APP_VERSION = "0.4.5"', 'APP_VERSION = "2.6.3"')
+text = text.replace('APP_VERSION = "2.6.1"', 'APP_VERSION = "2.6.3"')
+text = text.replace('APP_VERSION = "2.6.2"', 'APP_VERSION = "2.6.3"')
 meta.write_text(text, encoding="utf-8")
 
 launch_py = launcher / "launcher.py"
@@ -44,9 +45,10 @@ launch_py.write_text(text, encoding="utf-8")
 
 html = launcher / "frontend" / "nether-glass-launcher-standalone.html"
 text = html.read_text(encoding="utf-8")
-text = text.replace("윤슬 런처 0.3.9", "윤슬 런처 2.6.2")
-text = text.replace("윤슬 런처 0.4.5", "윤슬 런처 2.6.2")
-text = text.replace("윤슬 런처 2.6.1", "윤슬 런처 2.6.2")
+text = text.replace("윤슬 런처 0.3.9", "윤슬 런처 2.6.3")
+text = text.replace("윤슬 런처 0.4.5", "윤슬 런처 2.6.3")
+text = text.replace("윤슬 런처 2.6.1", "윤슬 런처 2.6.3")
+text = text.replace("윤슬 런처 2.6.2", "윤슬 런처 2.6.3")
 text = text.replace(
     "구형 낙인·장부 파일을 윤띵으로 자동 교체하고 윤슬 코어 배포 방식을 바로잡았습니다.",
     "기존 허브·HUD·단축키·설정 기능을 기린월드 26.2 코어로 전환했습니다.",
